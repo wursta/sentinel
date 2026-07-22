@@ -1,0 +1,8 @@
+name: 'sentinel'
+services:
+  php:
+    container_name: sentinel_php
+    volumes:
+      - '../.:/app'
+    build:
+      dockerfile: ../.docker.loc/images/php/Dockerfile

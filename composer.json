@@ -1,0 +1,34 @@
+{
+    "name": "wursta/sentinel",
+    "description": "Intercepts and logs HTTP requests made via cURL.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikhail Sazonov",
+            "email": "wursta@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "psr/log": "^1.1 || ^2 || ^3"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wursta\\Sentinel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wursta\\Sentinel\\Tests\\": "tests/"
+        }
+    }
+}
