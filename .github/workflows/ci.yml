@@ -1,34 +1,43 @@
-name: CI
+  name: CI
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+  on:
+    push:
+      branches:
+        - master
+    pull_request:
 
-jobs:
-  check:
-    runs-on: ubuntu-latest
+  jobs:
+    check:
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          extensions: curl, json
-          coverage: none
+        - name: Setup PHP
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '7.4'
+            extensions: curl, json
+            coverage: xdebug
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        - name: Install dependencies
+          run: composer install --prefer-dist --no-progress
 
-      - name: Run PHP CS Fixer check
-        run: vendor/bin/php-cs-fixer check src
+        - name: Run PHP CS Fixer check
+          run: vendor/bin/php-cs-fixer check src
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse src --memory-limit=512M
+        - name: Run PHPStan
+          run: vendor/bin/phpstan analyse src --memory-limit=512M
 
-      - name: Run PHPUnit
-        run: vendor/bin/phpunit tests
+        - name: Run PHPUnit
+          run: vendor/bin/phpunit tests --coverage-text
+
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: ./build/coverage/clover.xml
+            flags: unittests
+            name: codecov-umbrella
+            fail_ci_if_error: false
