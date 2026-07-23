@@ -1,7 +1,7 @@
 # Sentinel
 
 [![CI](https://github.com/wursta/sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/wursta/sentinel/actions/workflows/ci.yml)
-[![Codecov](https://codecov.io/github/wursta/sentinel/branch/master/graph/badge.svg)](https://codecov.io/github/wursta/sentinel)
+[![Codecov](https://codecov.io/github/wursta/sentinel/branch/main/graph/badge.svg)](https://codecov.io/github/wursta/sentinel)
 
 Intercepts and logs HTTP requests made via cURL at runtime.
 
