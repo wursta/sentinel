@@ -1,8 +1,55 @@
 name: 'sentinel'
 services:
-  php:
-    container_name: sentinel_php
+  php74:
+    build:
+      context: .
+      dockerfile: ../.docker.loc/images/php/Dockerfile
+      args:
+        PHP_VERSION: "7.4"
     volumes:
       - '../.:/app'
+
+  php80:
     build:
+      context: .
       dockerfile: ../.docker.loc/images/php/Dockerfile
+      args:
+        PHP_VERSION: "8.0"
+    volumes:
+      - '../.:/app'
+
+  php81:
+    build:
+      context: .
+      dockerfile: ../.docker.loc/images/php/Dockerfile
+      args:
+        PHP_VERSION: "8.1"
+    volumes:
+      - '../.:/app'
+
+  php82:
+    build:
+      context: .
+      dockerfile: ../.docker.loc/images/php/Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+    volumes:
+      - '../.:/app'
+
+  php83:
+    build:
+      context: .
+      dockerfile: ../.docker.loc/images/php/Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+    volumes:
+      - '../.:/app'
+
+  php84:
+    build:
+      context: .
+      dockerfile: ../.docker.loc/images/php/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+    volumes:
+      - '../.:/app'
