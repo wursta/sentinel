@@ -7,7 +7,8 @@
     pull_request:
 
   jobs:
-    check:
+    quality:
+      name: Quality (PHP 7.4)
       runs-on: ubuntu-latest
 
       steps:
@@ -19,21 +20,57 @@
           with:
             php-version: '7.4'
             extensions: curl, json
-            coverage: xdebug
 
         - name: Install dependencies
-          run: composer install --prefer-dist --no-progress
+          run: composer install --prefer-dist --no-progress --no-interaction
 
-        - name: Run PHP CS Fixer check
+        - name: Validate composer.json
+          run: composer validate --strict
+
+        - name: PHP CS Fixer
           run: vendor/bin/php-cs-fixer check src
 
-        - name: Run PHPStan
+        - name: PHPStan
           run: vendor/bin/phpstan analyse src --memory-limit=512M
 
-        - name: Run PHPUnit
-          run: vendor/bin/phpunit tests --coverage-text
+    tests:
+      name: PHPUnit (PHP ${{ matrix.php }})
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          php:
+            - "7.4"
+            - "8.0"
+            - "8.1"
+            - "8.2"
+            - "8.3"
+            - "8.4"
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-        - name: Upload coverage to Codecov
+        - name: Setup PHP
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: ${{ matrix.php }}
+            extensions: curl, json
+            coverage: ${{ matrix.php == '8.4' && 'xdebug' || 'none' }}
+
+        - name: Install dependencies
+          run: composer update --prefer-dist --no-progress --no-interaction
+
+        - name: PHPUnit
+          run: |
+            if [ "${{ matrix.php }}" = "8.4" ]; then
+              vendor/bin/phpunit tests \
+                --coverage-clover build/coverage/clover.xml
+            else
+              vendor/bin/phpunit tests --no-coverage
+            fi
+
+        - name: Upload coverage
+          if: matrix.php == '8.4'
           uses: codecov/codecov-action@v5
           with:
             token: ${{ secrets.CODECOV_TOKEN }}
@@ -41,3 +78,30 @@
             flags: unittests
             name: codecov-umbrella
             fail_ci_if_error: false
+
+    lowest:
+      name: Lowest dependencies (PHP 7.4)
+
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup PHP
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: "7.4"
+            extensions: curl, json
+
+        - name: Install lowest dependencies
+          run: |
+            rm -f composer.lock
+            composer update \
+              --prefer-lowest \
+              --prefer-dist \
+              --no-progress \
+              --no-interaction
+
+        - name: PHPUnit
+          run: vendor/bin/phpunit tests --no-coverage
